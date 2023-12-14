@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donald's Blog - Sports</title>
+    <link href= "/public/assets/styles.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+
+<!-- Header Section -->
+<header>
+    <!-- Logo linked to the main blog page -->
+    <a href="/blogs">
+        <div class="logo">
+            Donald's Blog
+        </div>
+    </a>
+
+    <!-- Navigation Links -->
+    <ul class="blog-links">
+        <li>
+            <!-- Sports category link -->
+            <a id="sports" href="/blogs/sports">Sports</a>
+        </li>
+        <li>
+            <!-- Music category link -->
+            <a href="/blogs/music">Music</a>
+        </li>
+        <li>
+            <!-- Movies category link -->
+            <a href="/blogs/movies">Movies</a>
+        </li>
+    </ul>
+</header>
+
+<!-- Main Content Section -->
+<main>
+    <!-- Page Title -->
+    <h1 class="page-title">Sports</h1>
+
+    <!-- Blog Container -->
+    <div class="blog-container">
+        <!-- Loop through each post -->
+        <% posts.forEach(post => { %>
+            <!-- Blog Wrapper for Each Post -->
+            <div class="blog-wrapper">
+                <!-- Check if post has an image -->
+                <% if (post.image_path) { %>
+                    <!-- Display post image -->
+                    <img class="blog-img" src="/public<%= post.image_path %>" alt="Image">
+                <% } %>
+
+                <!-- Blog Text Section -->
+                <div class="blog-text">
+                    <!-- Post Title -->
+                    <p class="post-title"><%= post.title %></p>
+
+                    <!-- Post Content -->
+                    <p><%= post.content %></p>
+
+                    <!-- Author Information -->
+                    <p>Posted by: <%= post.author %></p>
+
+                    <!-- Post Creation Date -->
+                    <p>Created At: <%= post.created_at %></p>
+                </div>
+            </div>
+        <% }); %>
+    </div>
+</main>
+
+
+<!-- Footer Section -->
+<footer>
+    <!-- Footer Text Section -->
+    <div class="footer-text">
+        <!-- Footer Header -->
+        <p class="footer-header">Embrace the Magic: Where Every Post Holds a Thousand Stories.</p>
+        
+        <!-- Footer Details -->
+        <p class="footer-details">Welcome to the Heart of Inspiration! Our daily lifestyle hub invites you on a journey through music, sports, and movies. In the words of Olive Kitteridge, 'There’s no such thing as a simple life.' Thank you for being a part of my blog.</p>
+    </div>
+
+    <!-- Footer Container -->
+    <div class="footer-container">
+        <!-- First div within Footer -->
+        <div class="div-one">
+            <!-- Social Media Icons -->
+            <div class="social-media">
+                <img src="/public/images/facebook.png" alt="facebook icon">
+                <img src="/public/images/instagram.png" alt="instagram icon">
+                <img src="/public/images/tiktok.png" alt="tiktok icon">
+                <img src="/public/images/x.png" alt="X icon">
+            </div>
+
+            <!-- Links Section -->
+            <div class="links">
+                <li>SPORTS</li>
+                <li>MUSIC</li>
+                <li>MOVIES</li>
+            </div>
+        </div>
+
+        <!-- Second div within Footer -->
+        <div class="div-two">
+            <!-- Footer Details -->
+            Transparency is key! We showcase only what we genuinely love and believe in, fostering a genuine connection between you and the brands we trust. This collaboration between Donald's blog and our valued community ensures our continued growth and the ability to keep the heart of our site beating. Thank you for being part of my journey
+        </div>
+    </div>
+
+    <!-- Footer Bottom Section -->
+    <div class="footer-bottom">
+        <!-- Copyright Information -->
+        &#169;2023 DONALD UMORU, ALL RIGHTS RESERVED
+    </div>
+</footer>
+
+
+
+    </body>
+</html>
