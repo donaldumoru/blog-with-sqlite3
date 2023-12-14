@@ -2,17 +2,10 @@ const express = require('express');
 const router = express.Router();
 const db = require('../database');
 const multer = require('multer');
+const bcrypt = require('bcryptjs');
+const passport = require('passport');
 
-// Middleware function for authentication check
-const authenticate = (req, res, next) => {
-    const isAuthenticated = req.session.isAuthenticated;
 
-    if (isAuthenticated) {
-        next();
-    } else {
-        res.redirect('/login');
-    }
-};
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -37,9 +30,83 @@ router.get('/', (req, res) => {
 });
 
 // Route to display the form for a new blog post
-router.get('/new', authenticate, (req, res) => {
+router.get('/new', (req, res) => {
     res.render('new');
 });
+
+
+// Route to add a new blog post
+router.post('/', upload.single('image'), (req, res) => {
+    const { title, content, author, category } = req.body;
+    const imagePath = req.file ? '/uploads/' + req.file.filename : null;
+
+    db.run('INSERT INTO posts (title, content, author, image_path, category) VALUES (?, ?, ?, ?, ?)', [title, content, author, imagePath, category], (err) => {
+        if (err) {
+            throw err;
+        }
+        res.redirect('/blogs');
+    });
+});
+
+// Route to delete a blog post
+router.delete('/blogs/:id', async (req, res) => {
+    try {
+        await db.run('DELETE FROM posts WHERE id = ?', req.params.id);
+        res.redirect('/blogs');
+    } catch (err) {
+        console.error(err);
+        res.redirect('/blogs');
+    }
+});
+
+
+// Authentication Routes
+
+// Signup route
+router.post('/signup', async (req, res) => {
+    try {
+        const hashedPassword = await bcrypt.hash(req.body.password, 10);
+        // Add user to the database
+        const { username, email } = req.body;
+        const addUserQuery = 'INSERT INTO users (username, email, password) VALUES (?,?, ?)';
+        await db.run(addUserQuery, [username, email, hashedPassword]);
+        res.redirect('/blogs/login');
+    } catch (error) {
+        console.error(error);
+        res.redirect('/blogs/signup');
+    }
+});
+
+// Login route
+router.post('/login', passport.authenticate('local', {
+    successRedirect: '/blogs',
+    failureRedirect: '/blogs/login',
+    failureFlash: true // Ensure you have flash messages configured
+}));
+
+// Logout route
+router.get('/logout', (req, res) => {
+    req.logout((err) => {
+        if (err) {
+            console.error(err);
+            return next(err);
+        }
+        res.redirect('/blogs/login');
+    });
+});
+
+// Route to display the login form
+router.get('/login', (req, res) => {
+    res.render('login');
+});
+
+
+// Route to display the signup form
+router.get('/signup', (req, res) => {
+    res.render('signup');
+});
+module.exports = router;
+
 
 // Route to display posts in the 'music' category
 router.get('/music', (req, res) => {
@@ -73,18 +140,6 @@ router.get('/movies', (req, res) => {
 
 
 
-// Route to add a new blog post
-router.post('/', authenticate, upload.single('image'), (req, res) => {
-    const { title, content, author, category } = req.body;
-    const imagePath = req.file ? '/uploads/' + req.file.filename : null;
-
-    db.run('INSERT INTO posts (title, content, author, image_path, category) VALUES (?, ?, ?, ?, ?)', [title, content, author, imagePath, category], (err) => {
-        if (err) {
-            throw err;
-        }
-        res.redirect('/blogs');
-    });
-});
 
 
 module.exports = router;
